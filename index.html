@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <title>Am I tall?</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            background-color: lightsalmon;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        main {
+            background-color: white;
+            border-radius: 16px;
+            width: 95%;
+            min-width: 200px;
+            min-height: 300px;
+            max-width: 500px;
+            padding: 2em;
+            box-shadow: 0 2px 5px 0 rgba(50, 50, 50, 0.5);
+        }
+
+        h1 {
+            margin: 0 0 0.75em;
+            color: darkslategrey;
+        }
+
+        form {
+            display: grid;
+            row-gap: 24px;
+        }
+
+        button {
+            border-radius: 8px;
+            color: lightsalmon;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 2px solid lightsalmon;
+            background-color: transparent;
+            padding: 0.5em 0.25em;
+            transition: all 300ms;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: lightsalmon;
+            color: white;
+        }
+
+        .unit-group {
+            display: flex;
+        }
+
+        .unit-item {
+            margin-left: 16px;
+            font-weight: bold;
+            border-radius: 100%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: lightgray;
+            color: gray;
+            transition: all 500ms;
+            cursor: pointer;
+        }
+
+        .unit-item.active {
+            background-color: #ffc3ad;
+            color: salmon;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <h1>Am I tall?</h1>
+        <div class="unit-group" role="radiogroup">
+            <div class="unit-item active" role="radio" aria-label="cm">cm</div>
+            <div class="unit-item" role="radio" aria-label="ft">ft</div>
+        </div>
+    </header>
+    <form>
+        <div>
+            Gender
+            <div>
+                <input type="radio" name="gender" id="male" value="male" checked>
+                <label for="male">Male</label>
+            </div>
+            <div>
+                <input type="radio" name="gender" id="female" value="female">
+                <label for="female">Female</label>
+            </div>
+        </div>
+        <div id="standard-metrics">
+            <label for="height">Height</label>
+            <input name="height" type="number" id="height" value="160">
+        </div>
+        <div id="imperial-metrics" class="hide">
+            <label for="feet">Feet</label>
+            <input name="feet" type="number" id="feet" value="6">
+            <label for="inches">Inches</label>
+            <input name="inches" type="number" id="inches" value="10">
+        </div>
+        <button>Calculate</button>
+    </form>
+</main>
+<script>
+    const form = document.querySelector('form')
+    const card = document.querySelector('main')
+    const cm = document.querySelector('[aria-label=cm]')
+    const ft = document.querySelector('[aria-label=ft]')
+    const standardMetrics = document.querySelector('#standard-metrics')
+    const imperialMetrics = document.querySelector('#imperial-metrics')
+
+    cm.addEventListener('click', () => {
+        cm.classList.toggle('active')
+        ft.classList.toggle('active')
+        standardMetrics.classList.toggle('hide')
+        imperialMetrics.classList.toggle('hide')
+    })
+
+    ft.addEventListener('click', () => {
+        cm.classList.toggle('active')
+        ft.classList.toggle('active')
+        standardMetrics.classList.toggle('hide')
+        imperialMetrics.classList.toggle('hide')
+    })
+
+    form.addEventListener('submit', event => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+
+        const usingStandard = cm.classList.contains('active')
+        let height = 0;
+        if (usingStandard) {
+            height = Number(formData.get('height'));
+        } else {
+            const feet = Number(formData.get('feet'));
+            const inches = Number(formData.get('inches'));
+            height = feet * 30.48 + inches * 2.54
+        }
+
+        const gender = formData.get('gender');
+        const isTallMale = gender === 'male' && height > 180;
+        const isTallFemale = gender === 'female' && height > 165;
+
+        if (isTallMale || isTallFemale) {
+            card.innerHTML = "Yep."
+        } else {
+            card.innerHTML = "Nope."
+        }
+    })
+</script>
+</body>
+</html>
